@@ -104,18 +104,22 @@ def Atebit(img):
 def xO_TGI(inImg, rgb=None):
     """Estimates leaf chlorophyll content based on true color imagery."""
     logger.info('Calculating Triangular Greenness Index')
-    if rgb is None:
-        print 'Setting default rgb bands'
-        rgb = [0,1,2]
-    r,g,b = rgb
-    x,y,z = inImg.shape
-    inImg = Atebit(inImg)
-    dtype= inImg.dtype
-    R = inImg[:,:,r].astype('float64')
-    G = inImg[:,:,g].astype('float64')
-    B = inImg[:,:,b].astype('float64')
-    _TGI = (-1) * 0.5 * ((200*(R-G))-(100 * (R-B)))
-    return Atebit(_TGI)
+    try:
+        if rgb is None:
+            print 'Setting default rgb bands'
+            rgb = [0,1,2]
+        r,g,b = rgb
+        x,y,z = inImg.shape
+        inImg = Atebit(inImg)
+        dtype= inImg.dtype
+        R = inImg[:,:,r].astype('float64')
+        G = inImg[:,:,g].astype('float64')
+        B = inImg[:,:,b].astype('float64')
+        _TGI = (-1) * 0.5 * ((200*(R-G))-(100 * (R-B)))
+        return Atebit(_TGI)
+    except:
+        logger.error('Error: unable to calculate triangular greenness index')
+        sys.exit(1)
 
 
 def ApplyColorRamp(imgPath, ct=None, colorScheme=None, _min=None, _max=None, stdStretch=None):
