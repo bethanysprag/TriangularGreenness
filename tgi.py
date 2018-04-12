@@ -106,7 +106,7 @@ def xO_TGI(inImg, rgb=None):
     logger.info('Calculating Triangular Greenness Index')
     try:
         if rgb is None:
-            print 'Setting default rgb bands'
+            logger.info('Setting default rgb bands')
             rgb = [0,1,2]
         r,g,b = rgb
         x,y,z = inImg.shape
@@ -176,7 +176,7 @@ def ApplyColorRamp(imgPath, ct=None, colorScheme=None, _min=None, _max=None, std
             Scheme = colorRamps[colorScheme]
         except:
             Scheme = colorRamps['GreenYellowRed']
-        print colorScheme, Scheme
+        logger.info('Color Scheme: %s, Color Values: %s' % (colorScheme, Scheme))
         colorScheme = Scheme
         colortable = gdal.ColorTable()
         _range = _max - _min

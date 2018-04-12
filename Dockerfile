@@ -30,5 +30,5 @@ RUN pip install -r requirements.txt
 RUN pip install nose==1.3.7
 
 RUN git clone https://github.com/bethanysprag/TriangularGreenness
-WORKDIR /work/triangulargreenness
+WORKDIR /work/TriangularGreenness
 CMD /bin/bash
