@@ -8,9 +8,6 @@ While TriangularGreenness can be used as a Python library, the more common use i
 ```
 $ python tgi.py 
 usage: bfalg-ndwi -i INPUT [-b BANDS BANDS] [--outfile OUTFILE]
-                  [--basename BASENAME] [--l8bqa L8BQA] [--coastmask]
-                  [--minsize MINSIZE] [--close CLOSE] [--simple SIMPLE]
-                  [--verbose VERBOSE] [--version]
 
 Beachfront Algorithm: NDWI (v1.0.3)
 
