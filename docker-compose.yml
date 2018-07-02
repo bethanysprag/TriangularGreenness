@@ -12,6 +12,8 @@ services:
       - '.:/work:rw'
 
   test:
+    build:
+      context: .
     image: bethanysprag/triangulargreenness:latest
     command: bash -c 'nosetests -v -s --with-coverage --cover-inclusive --cover-package TriangularGreenness --debug=TriangularGreenness'
     working_dir: /work
