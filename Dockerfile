@@ -24,10 +24,10 @@ RUN apt-get update; \
     easy_install pip; pip install wheel;
 
 COPY requirements.txt /work/requirements.txt
+COPY requirements-dev.txt /work/requirements-dev.txt
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN pip install nose==1.3.7
-
+RUN pip install -r requirements-dev.txt
 WORKDIR /work
 CMD /bin/bash

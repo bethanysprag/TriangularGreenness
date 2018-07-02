@@ -101,7 +101,7 @@ def Atebit(img):
     return img
 
 
-def xO_TGI(inImg, rgb=None):
+def TriangularGreenness(inImg, rgb=None):
     """Estimates leaf chlorophyll content based on true color imagery."""
     logger.info('Calculating Triangular Greenness Index')
     try:
@@ -202,7 +202,7 @@ def ApplyColorRamp(imgPath, ct=None, colorScheme=None, _min=None, _max=None, std
 def main(image_path, out_path, rgb=None):
     img = readImage(image_path)
     #Calculate Triangular Greenness
-    green = xO_TGI(img, rgb=rgb)
+    green = TriangularGreenness(img, rgb=rgb)
     #Save output array to file
     saveArrayAsRaster(image_path, out_path, green)
     #Apply ColorRamp
@@ -222,20 +222,8 @@ if __name__ == '__main__':
 
     img_path = None
     out_path = None
-    rgb = [0,1,2]
-
+    rgb = None
     args = parse_args(sys.argv[1:])
-    """
-    for i in range(len(sys.argv)-1):
-        arg = sys.argv[i]
-        if arg == '-i':
-            img_path = sys.argv[i+1]
-        elif arg == '-o':
-            out_path = sys.argv[i+1]
-        elif arg == '-r':
-            rgb = sys.argv[i+1]
-            rgb = int(rgb.split(','))
-    """
     img_path = args.input
     out_path = args.outfile
     rgb = args.bands
