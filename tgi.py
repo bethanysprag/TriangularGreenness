@@ -1,5 +1,4 @@
 import sys
-import os
 import argparse
 import logging
 import numpy as np
@@ -16,10 +15,21 @@ def parse_args(args):
     """ Parse arguments for the NDWI algorithm """
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-i', '--input', help='Input image', required=True)
-    parser.add_argument('-b', '--bands', help='Band numbers for Red,Green,and Blue bands', default=[0, 1, 2], nargs=3, type=int)
+    parser.add_argument('-i',
+                        '--input',
+                        help='Input image',
+                        required=True)
+    parser.add_argument('-b',
+                        '--bands',
+                        help='Band numbers for Red,Green,and Blue bands',
+                        default=[0, 1, 2],
+                        nargs=3,
+                        type=int)
 
-    parser.add_argument('-o', '--outfile', required=True, help='Output Filename', default='')
+    parser.add_argument('-o',
+                        '--outfile',
+                        required=True,
+                        help='Output Filename')
     return parser.parse_args(args)
 
 def readImage(imgPath):
@@ -90,7 +100,7 @@ def saveArrayAsRaster(rasterfn, newRasterfn, array):
     outband.FlushCache()
 
 
-def Atebit(img):
+def ConvertTo8bit(img):
     """Stretches and converts image array to 8-bit"""
     logger.info('Converting image to 8-bit')
     imgMin = img.min()
@@ -109,20 +119,24 @@ def TriangularGreenness(inImg, rgb=None):
             logger.info('Setting default rgb bands')
             rgb = [0,1,2]
         r,g,b = rgb
-        x,y,z = inImg.shape
-        inImg = Atebit(inImg)
-        dtype= inImg.dtype
+        inImg = ConvertTo8bit(inImg)
         R = inImg[:,:,r].astype('float64')
         G = inImg[:,:,g].astype('float64')
         B = inImg[:,:,b].astype('float64')
         _TGI = (-1) * 0.5 * ((200*(R-G))-(100 * (R-B)))
-        return Atebit(_TGI)
+        del R,G,B
+        return ConvertTo8bit(_TGI)
     except:
         logger.error('Error: unable to calculate triangular greenness index')
         sys.exit(1)
 
 
-def ApplyColorRamp(imgPath, ct=None, colorScheme=None, _min=None, _max=None, stdStretch=None):
+def ApplyColorRamp(imgPath,
+                   ct=None,
+                   colorScheme=None,
+                   _min=None,
+                   _max=None,
+                   stdStretch=None):
     """Applys color ramp to geotif"""
     logger.info('Applying color ramp to output image')
     rs = gdal.Open(imgPath, gdal.GA_Update)
@@ -188,7 +202,10 @@ def ApplyColorRamp(imgPath, ct=None, colorScheme=None, _min=None, _max=None, std
         for i in range(int(_min),_max):
             colortable.SetColorEntry(i,colorScheme[0])
         for i in range(len(binValues)-1):
-            colortable.CreateColorRamp(binValues[i],colorScheme[i],binValues[i+1],colorScheme[i+1])
+            colortable.CreateColorRamp(binValues[i],
+                                       colorScheme[i],
+                                       binValues[i+1],
+                                       colorScheme[i+1])
         for i in range(binValues[-1],int(_max)):
            colortable.SetColorEntry(i,colorScheme[-1])
         
@@ -206,7 +223,11 @@ def main(image_path, out_path, rgb=None):
     #Save output array to file
     saveArrayAsRaster(image_path, out_path, green)
     #Apply ColorRamp
-    ApplyColorRamp(out_path, colorScheme='PH_Green', _min=0, _max=255, stdStretch=None)
+    ApplyColorRamp(out_path,
+                   colorScheme='PH_Green',
+                   _min=0,
+                   _max=255,
+                   stdStretch=None)
 
 
 def usage():
