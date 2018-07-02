@@ -8,13 +8,13 @@ try:
 except:
     import gdal, osr
 
+logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
 def parse_args(args):
     """ Parse arguments for the NDWI algorithm """
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
     parser.add_argument('-i',
                         '--input',
                         help='Input image',
@@ -30,6 +30,8 @@ def parse_args(args):
                         '--outfile',
                         required=True,
                         help='Output Filename')
+    h = '0: Quiet, 1: Debug, 2: Info, 3: Warn, 4: Error, 5: Critical'
+    parser.add_argument('--verbose', help=h, default=2, type=int)
     return parser.parse_args(args)
 
 def readImage(imgPath):
@@ -167,30 +169,76 @@ def ApplyColorRamp(imgPath,
         _max = int(_max)
         if colorScheme is None:
            colorScheme = 'GreenYellowRed'
-        colorRamps = {'GreenYellowRed': [(0,128,0),(0,255,0),(255,255,0),(255,0,0),(128,0,0)],
-                      'PR': [(0,0,143),(0,0,255),(0,255,255),(255,255,0),(255,0,0),(128,0,0)],
-                      'BlueRed':[(0,0,143),(0,0,255),(255,0,0),(128,0,0)],
-                      'RedBlue':[(128,0,0),(255,0,0),(0,0,255),(0,0,128)],
-                      'YellowOrangeRed':[(128,128,0),(255,255,0),(255,128,0),(255,0,0),(128,0,0)],
-                      'OrangeRedMagentaBlue': [(200,100,0),(255,0,0),(255,0,255),(0,0,200)],
-                      'RedYellowCyanBlue' : [(255,0,0),(255,255,0),(0,255,255),(0,0,255)],
-                      'GreenCyanBlue' : [(0,255,0),(0,255,255),(0,0,255),],
-                      'GreenCyanBlue2' : [(0,50,0),(0,128,128),(0,0,255),],
-                      'Greens' : [(0,50,0),(0,100,0),(0,150,0),(0,200,0),(0,255,0)],
-                      'Blues' : [(0,0,50),(0,0,100),(0,0,150),(0,0,200),(0,0,255)],
-                      'Reds' : [(50,0,0),(100,0,0),(150,0,0),(200,0,0),(255,0,0)],
-                      'Rainbow' : [(255,0,255),(0,0,255),(0,255,255),(0,255,0),(255,255,0),(255,128,0),(255,0,0)],
-                      'Grey' : [(0,0,0),(255,255,255)],
-                      'Earth' : [(80,45,10),(134,71,25),(150,125,25),(100,128,0),(0,100,25)],
-                      'Cool' : [(0,255,255),(0,150,255),(75,0,75),(255,0,255)],
-                      'Terrain' : [(0,0,75),(0,0,255),(0,255,128),(255,255,175),(150,80,20),(80,45,10)],
-                      'PH_Green': [(215,25,28),(253,174,97),(255,255,191),(166,217,106),(26,150,65)]
+        colorRamps = {'GreenYellowRed': 
+                          [(0,128,0),(0,255,0),(255,255,0),(255,0,0),(128,0,0)],
+                      'PR': 
+                          [(0,0,143),
+                           (0,0,255),
+                           (0,255,255),
+                           (255,255,0),
+                           (255,0,0),
+                           (128,0,0)],
+                      'BlueRed':
+                          [(0,0,143),(0,0,255),(255,0,0),(128,0,0)],
+                      'RedBlue':
+                          [(128,0,0),(255,0,0),(0,0,255),(0,0,128)],
+                      'YellowOrangeRed':
+                          [(128,128,0),
+                           (255,255,0),
+                           (255,128,0),
+                           (255,0,0),
+                           (128,0,0)],
+                      'OrangeRedMagentaBlue': 
+                          [(200,100,0),(255,0,0),(255,0,255),(0,0,200)],
+                      'RedYellowCyanBlue' : 
+                          [(255,0,0),(255,255,0),(0,255,255),(0,0,255)],
+                      'GreenCyanBlue' : 
+                          [(0,255,0),(0,255,255),(0,0,255),],
+                      'GreenCyanBlue2' : 
+                          [(0,50,0),(0,128,128),(0,0,255),],
+                      'Greens' : 
+                          [(0,50,0),(0,100,0),(0,150,0),(0,200,0),(0,255,0)],
+                      'Blues' : 
+                          [(0,0,50),(0,0,100),(0,0,150),(0,0,200),(0,0,255)],
+                      'Reds' : 
+                          [(50,0,0),(100,0,0),(150,0,0),(200,0,0),(255,0,0)],
+                      'Rainbow' : 
+                          [(255,0,255),
+                           (0,0,255),
+                           (0,255,255),
+                           (0,255,0),
+                           (255,255,0),
+                           (255,128,0),
+                           (255,0,0)],
+                      'Grey' : 
+                          [(0,0,0),(255,255,255)],
+                      'Earth' : 
+                          [(80,45,10),
+                           (134,71,25),
+                           (150,125,25),
+                           (100,128,0),
+                           (0,100,25)],
+                      'Cool' : 
+                          [(0,255,255),(0,150,255),(75,0,75),(255,0,255)],
+                      'Terrain' : 
+                          [(0,0,75),
+                           (0,0,255),
+                           (0,255,128),
+                           (255,255,175),
+                           (150,80,20),
+                           (80,45,10)],
+                      'PH_Green': 
+                          [(215,25,28),
+                           (253,174,97),
+                           (255,255,191),
+                           (166,217,106),
+                           (26,150,65)]
                       }
         try:
             Scheme = colorRamps[colorScheme]
         except:
             Scheme = colorRamps['GreenYellowRed']
-        logger.info('Color Scheme: %s, Color Values: %s' % (colorScheme, Scheme))
+        logger.info('ColorScheme: %s, ColorValues: %s' % (colorScheme, Scheme))
         colorScheme = Scheme
         colortable = gdal.ColorTable()
         _range = _max - _min
@@ -239,15 +287,13 @@ def usage():
     sys.exit(1)
 
 
-if __name__ == '__main__':
-
-    img_path = None
-    out_path = None
-    rgb = None
+def cli():
+    logger.info('Calculating Triangular Greeness using CLI commands')
     args = parse_args(sys.argv[1:])
     img_path = args.input
     out_path = args.outfile
     rgb = args.bands
+    logger.setLevel(args.verbose * 10)
     if img_path is None:
         usage()
     if out_path is None:
@@ -255,3 +301,7 @@ if __name__ == '__main__':
 
     main(img_path, out_path, rgb=rgb)
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    cli()
