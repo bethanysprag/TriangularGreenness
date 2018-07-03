@@ -278,15 +278,6 @@ def main(image_path, out_path, rgb=None):
                    stdStretch=None)
 
 
-def usage():
-    print("""
-          Usage:
-          tgi -i in_raster -o out_raster -b R,G,B default 0,1,2
-          """
-          )
-    sys.exit(1)
-
-
 def cli():
     logger.info('Calculating Triangular Greeness using CLI commands')
     args = parse_args(sys.argv[1:])
@@ -294,10 +285,6 @@ def cli():
     out_path = args.outfile
     rgb = args.bands
     logger.setLevel(args.verbose * 10)
-    if img_path is None:
-        usage()
-    if out_path is None:
-        usage()
 
     main(img_path, out_path, rgb=rgb)
     sys.exit(0)
