@@ -18,7 +18,7 @@ optional arguments:
   -i INPUT, --input INPUT
                         Input image (Required, Must contain red, green, and 
                         blue bands) (default: None)
-  -b BANDS BANDS, --bands BANDS BANDS
+  -b BANDS BANDS BANDS, --bands BANDS BANDS BANDS
                         Band numbers for Red, Green, and Blue bands 
                         (default: [0, 1, 2])
   -o, OUTFILE, --outfile OUTDIR
