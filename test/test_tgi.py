@@ -4,12 +4,6 @@ import tgi
 imgOut = 'test/testImage_green.tif'
 imgIn = 'test/testImage.tif'
 
-def test_main():
-    if os.path.exists(imgOut):
-        os.remove(imgOut)
-    tgi.main(imgIn, imgOut, rgb=[0,1,2])
-    assert os.path.exists(imgOut)
-
 
 def test_readImage():
     img = tgi.readImage(imgIn)
@@ -29,3 +23,15 @@ def test_tgi():
     assert green is not None
     green=None
 
+
+def test_main():
+    if os.path.exists(imgOut):
+        os.remove(imgOut)
+    tgi.main(imgIn, imgOut, rgb=[0,1,2])
+    assert os.path.exists(imgOut)
+
+
+def test_parse_args():
+    args=['-i', 'inputImage.tif', '-o', 'outputImage.tif', '-b', '1', '2', '3']
+    arguments = tgi.parse_args(args)
+    assert arguments.input == 'inputImage.tif'
