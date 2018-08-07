@@ -11,7 +11,7 @@ While TriangularGreenness can be used as a Python library, the more common use i
 
 ```
 $ python tgi.py 
-usage: bfalg-ndwi -i INPUT -o OUTFILE [-b BANDS BANDS]
+usage: tgi.py -i INPUT -o OUTFILE [-b BANDS BANDS BANDS]
 
 optional arguments:
   -h, --help            show this help message and exit
